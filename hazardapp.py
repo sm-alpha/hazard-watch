@@ -13,3 +13,7 @@ with open('shakemap_query_20221105.json','r') as f:
     data = json.loads(f.read())
 
 eqdata = load_data(data)
+
+for i in range(len(eqdata.index)):
+    print(eqdata.iloc[i]["properties.mag"])
+    print(eqdata.iloc[i]["properties.place"])
