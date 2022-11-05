@@ -1,20 +1,33 @@
-#our eq app!
+#TT EQ app!
 import streamlit as st
+import altair as alt
+import numpy as np
+import pandas as pd
+import pydeck as pdk
+
+@st.experimental_singleton
+def load_data():
+    filename = 'shakemap_query_20221105.json'
+    with open(filename,'r') as f:
+        data = json.loads(f.read())
+    eqdata = pd.json_normalize(data, record_path =['features'])
+    return eqdata
+
 
 def main():
-    st.write("Hello world!")
-    def load_data(data):
-    json_data = pd.json_normalize(data, record_path =['features'])
-    return json_data
+    st.set_page_config(layout="wide", page_title="TT EQ Monitor", page_icon=":volcano:")
     
-    with open('shakemap_query_20221105.json','r') as f:
-        data = json.loads(f.read())
+    x = st.slider('Trigger Intensity - MMI (modified mercalli intensity)')
+    eqdata = load_data
+    if st.checkbox('Show dataframe'):
+        eqdata
+    #st.write("Hello world!")
+       
+    
 
-    eqdata = load_data(data)
-
-    for i in range(len(eqdata.index)):
-        print(eqdata.iloc[i]["properties.mag"])
-        print(eqdata.iloc[i]["properties.place"])
+    #for i in range(len(eqdata.index)):
+    #    print(eqdata.iloc[i]["properties.mag"])
+    #   print(eqdata.iloc[i]["properties.place"])
 
 if __name__=='__main__':
     main()
