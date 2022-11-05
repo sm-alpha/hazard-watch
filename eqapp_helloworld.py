@@ -18,8 +18,8 @@ def main():
     st.set_page_config(layout="wide", page_title="TT EQ Monitor", page_icon=":volcano:")
     
     x = st.slider('Trigger Intensity - MMI (modified mercalli intensity)')
-    eqdata = load_data
-    if st.checkbox('Show dataframe'):
+    eqdata = load_data()
+    if st.checkbox('Show my shake data: '):
         eqdata
     #st.write("Hello world!")
        
