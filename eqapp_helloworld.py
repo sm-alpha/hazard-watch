@@ -12,7 +12,18 @@ def load_data():
     with open(filename,'r') as f:
         data = json.loads(f.read())
     eqdata = pd.json_normalize(data, record_path =['features'])
-    return eqdata
+    n_data_points = len(eqdata)
+    lat = [0]*n_data_points
+    lon = [0]*n_data_points
+    for i, geo_coord in eqdata["geometry.coordinates"].items():
+        lon[i], lat[i] = geo_coord[0], geo_coord[1]
+    
+    condensed_data = eqdata[["id", "properties.place", "properties.mag"]].copy()
+    condensed_data["lat"] = lat
+    condensed_data["lon"] = lon
+    data_dict = {"original_data": eqdata, "latitude":lat, "longitude": lon, 
+                 "condensed_data": condensed_data}
+    return data_dict
 
 def map(data, lat, lon, zoom):
     # FUNCTION FOR AIRPORT MAPS
@@ -55,14 +66,16 @@ def mpoint(lat, lon):
 
 def main():
     st.set_page_config(page_title="TT Hazard Monitor", page_icon=":volcano:")
-    eqdata = load_data()
-    asset_location = {"lat":37.7749, "lon":-122.4194}
+    data_dict = load_data()
+    plot_data = data_dict["condensed_data"]
+    #TT SF office
+    asset1_lat = 37.789480
+    asset1_long = -122.394160
+    asset_location = {"lat":asset1_lat, "lon":-122.394160}
     #if st.checkbox('Show my shake data: '):
     #    eqdata
     #st.write("Hello world!")
        
-    
-
     #for i in range(len(eqdata.index)):
     #   print(eqdata.iloc[i]["properties.mag"])
     #   print(eqdata.iloc[i]["properties.place"])
@@ -89,7 +102,7 @@ def main():
     with row1_1:
         st.title("Thornton Tomasetti - Hazard Monitor")
         mag_selected = st.slider('Trigger Intensity - MMI (modified mercalli intensity)', min_value=1,   
-                       max_value=12, value=6, key="pickup_hour", on_change=update_query_params)
+                       max_value=12, value=6, key="thresh_intensity", on_change=update_query_params)
 
 
     with row1_2:
@@ -104,10 +117,10 @@ def main():
     # SETTING THE ZOOM LOCATIONS FOR THE AIRPORTS
     san_francisco = [37.7749, -122.4194]
 
-    zoom_level = 12
-    df = pd.DataFrame(np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],columns=['lat', 'lon'])
+    zoom_level = 7
+    #df = pd.DataFrame(plot_data,columns=['lat', 'lon'])
     st.write("**San Francisco**")
-    st.map(df)
+    st.map(plot_data, san_francisco[0], san_francisco[1], zoom = zoom_level)
     #map(filterdata(data, mag_selected), san_francisco[0], san_francisco[1], zoom_level)
 
     
