@@ -30,7 +30,7 @@ for i in range(len(eqdata.index)):
     if "shakemap" in event_prop_types:
         #get intensity at asset location
         event_intensity = eqcalc.get_intensity(asset1_lat,asset1_lon,event)
-        intensity_dict[event["id"]] = 1.2
+        intensity_dict[event["id"]] = event_intensity
     else:
         intensity_dict[event["id"]] = -1
 
