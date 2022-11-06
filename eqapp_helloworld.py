@@ -27,7 +27,6 @@ def load_data():
     return data_dict
 
 def plot_map(data, lat, lon, zoom):
-    # FUNCTION FOR AIRPORT MAPS
     st.write(
         pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v9",
@@ -53,7 +52,7 @@ def plot_map(data, lat, lon, zoom):
     )
 
 
-# FILTER DATA FOR A SPECIFIC HOUR, CACHE
+# FILTER DATA FOR A SPECIFIC INTENSITY
 @st.experimental_memo
 def filterdata(df, threshold_magnitude):
     return df[df["properties.mag"] > threshold_magnitude]
