@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pydeck as pdk
 import json
+import eqcalc
 
 @st.experimental_singleton
 def load_data():
@@ -90,8 +91,8 @@ def plot_map2(plotdata, zoom):
 
 # FILTER DATA FOR A SPECIFIC INTENSITY
 @st.experimental_memo
-def filterdata(df, threshold_magnitude):
-    return df[df["properties.mag"] > threshold_magnitude]
+def filterdata(condensed_data, threshold_intensity):
+    return condensed_data[condensed_data["intensities"] > threshold_intensity]
 
 
 # CALCULATE MIDPOINT FOR GIVEN SET OF DATA
@@ -104,40 +105,45 @@ def main():
     st.set_page_config(page_title="TT Hazard Monitor", page_icon=":volcano:")
     data_dict = load_data()
     plot_data = data_dict["plot_data"]
+    condensed_data = data_dict["condensed_data"]
     #TT SF office
     asset1_lat = 37.789480
-    asset1_long = -122.394160
+    asset1_lon = -122.394160
     asset_location = {"lat":asset1_lat, "lon":-122.394160}
-    #if st.checkbox('Show my shake data: '):
-    #    eqdata
-    #st.write("Hello world!")
+
+    intensity_dict = dict()
+    eqdata = data_dict["original_data"]
+    for i in range(len(eqdata.index)):
+        event = eqdata.iloc[i]
+        event_prop_types = event["properties.types"]
+
+        if "shakemap" in event_prop_types:
+            #get intensity at asset location
+            event_intensity = eqcalc.get_intensity(asset1_lat,asset1_lon,event)
+            intensity_dict[event["id"]] = event_intensity
+        else:
+            intensity_dict[event["id"]] = -1
        
-    #for i in range(len(eqdata.index)):
-    #   print(eqdata.iloc[i]["properties.mag"])
-    #   print(eqdata.iloc[i]["properties.place"])
-
-
     # LAYING OUT THE TOP SECTION OF THE APP
     row1_1, row1_2 = st.columns((2, 3))
 
     if not st.session_state.get("url_synced", False):
         try:
-            mag = int(st.experimental_get_query_params()["mag"][0])
-            st.session_state["mag"] = mag
+            x = int(st.experimental_get_query_params()["intensity"][0])
+            st.session_state["intensity"] = x
             st.session_state["url_synced"] = True
         except KeyError:
             pass
 
     # IF THE SLIDER CHANGES, UPDATE THE QUERY PARAM
     def update_query_params():
-        threshold_magnitude = st.session_state["mag"]
-        st.experimental_set_query_params(mag=threshold_magnitude)
-
-    
+        intensity_selected = st.session_state["intensity"]
+        st.experimental_set_query_params(intensity=intensity_selected)
+   
     
     with row1_1:
         st.title("Thornton Tomasetti - Hazard Monitor")
-        mag_selected = st.slider('Trigger Intensity - MMI (modified mercalli intensity)', min_value=1,   
+        intensity_selected = st.slider('Trigger Intensity - MMI (modified mercalli intensity)', min_value=1,   
                        max_value=12, value=6, key="thresh_intensity", on_change=update_query_params)
 
 
@@ -161,6 +167,9 @@ def main():
        
     plot_map2(plot_data, zoom = zoom_level)
     #map(filterdata(data, mag_selected), san_francisco[0], san_francisco[1], zoom_level)
+    if st.checkbox('Show my shake data: '):
+        condensed_data
+        
 
 
 if __name__=='__main__':
