@@ -21,8 +21,9 @@ def load_data():
     condensed_data = eqdata[["id", "properties.place", "properties.mag"]].copy()
     condensed_data["lat"] = lat
     condensed_data["lon"] = lon
+    plot_data = pd.DataFrame(zip(lat,lon), columns = ("lat","lon"))
     data_dict = {"original_data": eqdata, "latitude":lat, "longitude": lon, 
-                 "condensed_data": condensed_data}
+                 "condensed_data": condensed_data, "plot_data" : plot_data}
     return data_dict
 
 def map(data, lat, lon, zoom):
@@ -67,7 +68,7 @@ def mpoint(lat, lon):
 def main():
     st.set_page_config(page_title="TT Hazard Monitor", page_icon=":volcano:")
     data_dict = load_data()
-    plot_data = data_dict["condensed_data"]
+    plot_data = data_dict["plot_data"]
     #TT SF office
     asset1_lat = 37.789480
     asset1_long = -122.394160
