@@ -26,7 +26,7 @@ def load_data():
                  "condensed_data": condensed_data, "plot_data" : plot_data}
     return data_dict
 
-def map(data, lat, lon, zoom):
+def plot_map(data, lat, lon, zoom):
     # FUNCTION FOR AIRPORT MAPS
     st.write(
         pdk.Deck(
@@ -46,7 +46,7 @@ def map(data, lat, lon, zoom):
                     elevation_scale=4,
                     elevation_range=[0, 1000],
                     pickable=True,
-                    extruded=True,
+                    extruded=False,
                 ),
             ],
         )
@@ -121,7 +121,7 @@ def main():
     zoom_level = 7
     #df = pd.DataFrame(plot_data,columns=['lat', 'lon'])
     st.write("**San Francisco**")
-    map(plot_data, san_francisco[0], san_francisco[1], zoom = zoom_level)
+    plot_map(plot_data, san_francisco[0], san_francisco[1], zoom = zoom_level)
     #map(filterdata(data, mag_selected), san_francisco[0], san_francisco[1], zoom_level)
 
 
