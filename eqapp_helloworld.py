@@ -4,6 +4,7 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import pydeck as pdk
+import json
 
 @st.experimental_singleton
 def load_data():
@@ -26,7 +27,7 @@ def main():
     
 
     #for i in range(len(eqdata.index)):
-    #    print(eqdata.iloc[i]["properties.mag"])
+    #   print(eqdata.iloc[i]["properties.mag"])
     #   print(eqdata.iloc[i]["properties.place"])
 
 if __name__=='__main__':
