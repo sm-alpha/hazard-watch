@@ -121,10 +121,8 @@ def main():
     zoom_level = 7
     #df = pd.DataFrame(plot_data,columns=['lat', 'lon'])
     st.write("**San Francisco**")
-    st.map(plot_data, san_francisco[0], san_francisco[1], zoom = zoom_level)
+    map(plot_data, san_francisco[0], san_francisco[1], zoom = zoom_level)
     #map(filterdata(data, mag_selected), san_francisco[0], san_francisco[1], zoom_level)
-
-    
 
 
 if __name__=='__main__':
