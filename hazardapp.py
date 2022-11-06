@@ -19,7 +19,7 @@ eqdata = load_data(data)
 
 #TT SF office
 asset1_lat = 37.789480
-asset1_long = -122.394160
+asset1_lon = -122.394160
 
 intensity_dict = dict()
 
@@ -29,22 +29,8 @@ for i in range(len(eqdata.index)):
 
     if "shakemap" in event_prop_types:
         #get intensity at asset location
-        event_intensity = eqcalc.get_intensity(asset1_lat,asset1_long,event)
+        event_intensity = eqcalc.get_intensity(asset1_lat,asset1_lon,event)
         intensity_dict[event["id"]] = 1.2
     else:
         intensity_dict[event["id"]] = -1
 
-
-
-    
-    
-    
-
-    
-    
-
-
-   
-
-    print(eqdata.iloc[i]["properties.mag"])
-    print(eqdata.iloc[i]["properties.place"])
