@@ -52,36 +52,32 @@ def plot_map(data, lat, lon, zoom):
         )
     )
 
-def plot_map2(plotdata, zoom):
-    df = pd.DataFrame(
-    np.random.randn(100, 2) / [50, 50] + [37.76, -122.4],
-    columns=['lat', 'lon'])
-    
-    
+def plot_map2(df, zoom):
 
     st.pydeck_chart(pdk.Deck(
         map_style=None,
         initial_view_state=pdk.ViewState(
             latitude=37.76,
             longitude=-122.4,
-            zoom=11,
+            zoom=7,
             pitch=50,
         ),
-        layers=[
+        layers=
+        [
             pdk.Layer(
             'HexagonLayer',
-            data=plotdata,
-            get_position='[lon, lat]',
+            data=df,
+            get_position=['lon', 'lat'],
             radius=200,
-            elevation_scale=4,
+            elevation_scale=50,
             elevation_range=[0, 1000],
             pickable=True,
             extruded=True,
-            ),
+            coverage = 1),            
             pdk.Layer(
                 'ScatterplotLayer',
-                data=plotdata,
-                get_position='[lon, lat]',
+                data=df,
+                get_position=['lon', 'lat'],
                 get_color='[200, 30, 0, 160]',
                 get_radius=200,
             ),
