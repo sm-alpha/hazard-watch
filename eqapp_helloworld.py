@@ -18,7 +18,8 @@ def load_data():
 def main():
     st.set_page_config(page_title="TT Hazard Monitor", page_icon=":volcano:")
     st.markdown("Thornton Tomasetti - Hazard monitor")
-    x = st.slider('Trigger Intensity - MMI (modified mercalli intensity)')
+    x = st.slider('Trigger Intensity - MMI (modified mercalli intensity)', min_value=1,   
+                       max_value=12, value=6, step=0.5)
     eqdata = load_data()
     if st.checkbox('Show my shake data: '):
         eqdata
