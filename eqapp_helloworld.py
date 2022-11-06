@@ -16,7 +16,7 @@ def load_data():
     lat = [0]*n_data_points
     lon = [0]*n_data_points
     for i, geo_coord in eqdata["geometry.coordinates"].items():
-        lon[i], lat[i] = geo_coord[0], geo_coord[1]
+        lon[i], lat[i] = float(geo_coord[0]), float(geo_coord[1])
     
     condensed_data = eqdata[["id", "properties.place", "properties.mag"]].copy()
     condensed_data["lat"] = lat
@@ -45,12 +45,48 @@ def plot_map(data, lat, lon, zoom):
                     elevation_scale=4,
                     elevation_range=[0, 1000],
                     pickable=True,
-                    extruded=False,
+                    extruded=True,
                 ),
             ],
         )
     )
 
+def plot_map2(plotdata, zoom):
+    df = pd.DataFrame(
+    np.random.randn(100, 2) / [50, 50] + [37.76, -122.4],
+    columns=['lat', 'lon'])
+    
+    
+
+    st.pydeck_chart(pdk.Deck(
+        map_style=None,
+        initial_view_state=pdk.ViewState(
+            latitude=37.76,
+            longitude=-122.4,
+            zoom=11,
+            pitch=50,
+        ),
+        layers=[
+            pdk.Layer(
+            'HexagonLayer',
+            data=plotdata,
+            get_position='[lon, lat]',
+            radius=200,
+            elevation_scale=4,
+            elevation_range=[0, 1000],
+            pickable=True,
+            extruded=True,
+            ),
+            pdk.Layer(
+                'ScatterplotLayer',
+                data=plotdata,
+                get_position='[lon, lat]',
+                get_color='[200, 30, 0, 160]',
+                get_radius=200,
+            ),
+        ],
+    ))
+        
 
 # FILTER DATA FOR A SPECIFIC INTENSITY
 @st.experimental_memo
@@ -121,6 +157,9 @@ def main():
     #df = pd.DataFrame(plot_data,columns=['lat', 'lon'])
     st.write("**San Francisco**")
     st.map(plot_data, zoom = zoom_level)
+
+       
+    plot_map2(plot_data, zoom = zoom_level)
     #map(filterdata(data, mag_selected), san_francisco[0], san_francisco[1], zoom_level)
 
 
