@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pydeck as pdk
 import json
+import plotly.express as px
 
 @st.experimental_singleton
 def load_data():
@@ -26,67 +27,6 @@ def load_data():
                  "condensed_data": condensed_data, "plot_data" : plot_data}
     return data_dict
 
-def plot_map(data, lat, lon, zoom):
-    st.write(
-        pdk.Deck(
-            map_style="mapbox://styles/mapbox/light-v9",
-            initial_view_state={
-                "latitude": lat,
-                "longitude": lon,
-                "zoom": zoom,
-                "pitch": 50,
-            },
-            layers=[
-                pdk.Layer(
-                    "HexagonLayer",
-                    data=data,
-                    get_position=["lon", "lat"],
-                    radius=100,
-                    elevation_scale=4,
-                    elevation_range=[0, 1000],
-                    pickable=True,
-                    extruded=True,
-                ),
-            ],
-        )
-    )
-
-def plot_map2(plotdata, zoom):
-    df = pd.DataFrame(
-    np.random.randn(100, 2) / [50, 50] + [37.76, -122.4],
-    columns=['lat', 'lon'])
-    
-    
-
-    st.pydeck_chart(pdk.Deck(
-        map_style=None,
-        initial_view_state=pdk.ViewState(
-            latitude=37.76,
-            longitude=-122.4,
-            zoom=11,
-            pitch=50,
-        ),
-        layers=[
-            pdk.Layer(
-            'HexagonLayer',
-            data=plotdata,
-            get_position='[lon, lat]',
-            radius=200,
-            elevation_scale=4,
-            elevation_range=[0, 1000],
-            pickable=True,
-            extruded=True,
-            ),
-            pdk.Layer(
-                'ScatterplotLayer',
-                data=plotdata,
-                get_position='[lon, lat]',
-                get_color='[200, 30, 0, 160]',
-                get_radius=200,
-            ),
-        ],
-    ))
-        
 
 # FILTER DATA FOR A SPECIFIC INTENSITY
 @st.experimental_memo
@@ -104,6 +44,7 @@ def main():
     st.set_page_config(page_title="TT Hazard Monitor", page_icon=":volcano:")
     data_dict = load_data()
     plot_data = data_dict["plot_data"]
+    condensed_data = data_dict["condensed_data"]
     #TT SF office
     asset1_lat = 37.789480
     asset1_long = -122.394160
@@ -153,14 +94,29 @@ def main():
     # SETTING THE ZOOM LOCATIONS FOR THE AIRPORTS
     san_francisco = [37.7749, -122.4194]
 
-    zoom_level = 7
-    #df = pd.DataFrame(plot_data,columns=['lat', 'lon'])
+    
     st.write("**San Francisco**")
-    st.map(plot_data, zoom = zoom_level)
-
-       
-    plot_map2(plot_data, zoom = zoom_level)
-    #map(filterdata(data, mag_selected), san_francisco[0], san_francisco[1], zoom_level)
+    st.pydeck_chart(pdk.Deck(
+        map_style=None,
+        initial_view_state=pdk.ViewState(
+            latitude=37.76,
+            longitude=-122.4,
+            zoom=11,
+            pitch=50,
+        ),
+        layers=[
+            pdk.Layer(
+                'ScatterplotLayer',
+                data=condensed_data,
+                get_position='[lon, lat]',
+                #get_color='[properties.mag]',
+                get_radius=200,
+            ),
+        ],
+    ))
+    
+    
+    
 
 
 if __name__=='__main__':
